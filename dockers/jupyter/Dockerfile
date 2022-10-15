@@ -55,7 +55,8 @@ RUN apt-get update --yes && \
     wine64 \
     # - end latest testing
     curl \
-    wget && \
+    wget \
+    xvfb && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
@@ -273,13 +274,16 @@ HEALTHCHECK  --interval=15s --timeout=3s --start-period=5s --retries=3 \
 RUN echo 'export PATH="$PATH:/opt/conda/envs/pdfparser/bin"' >> /etc/bash.bashrc &&\
 		source /etc/bash.bashrc
 
+COPY wine-setup.sh /usr/local/bin
+RUN chmod 555 /usr/local/bin/wine-setup.sh
 
 ## Switch back to "${NB_USER}" to avoid accidental container runs as root
-USER ${NB_UID}
+##USER ${NB_UID}
+USER ${NB_USER}
 
-RUN /usr/bin/wineboot
-COPY OfficeMalScanner/* /home/${NB_USER}/.wine/drive_c/windows/
-RUN ln -s /home/${NB_USER}/.wine/drive_c/users/${NB_USER} /home/${NB_USER}/WineUser
+#RUN xvfb-run /usr/local/bin/wine-setup.sh
+##COPY OfficeMalScanner/* /home/${NB_USER}/.wine/drive_c/windows/
+#RUN ln -s /home/${NB_USER}/.wine/drive_c/users/${NB_USER} /home/${NB_USER}/WineUser
 
 RUN jupyter kernelspec list
 RUN echo y | jupyter kernelspec uninstall .net-fsharp

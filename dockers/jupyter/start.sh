@@ -14,36 +14,10 @@ _log () {
 }
 _log "Entered start.sh with args:" "$@"
 
-_log "starting steve stuff"
-
-##conda install ipykernel
-
-##conda env create -f /tmp/pwntools.yml
-
-##source /home/steve/.bashrc
-##conda init bash
-
-##source /opt/conda/etc/profile.d/conda.sh
-
-_log "about to activate pwnTools ..."
-
-##conda activate pwntools
-
-##python -m ipykernel install --user --name pwntools --display-name="Python 3.8 pwnTools "
-
-_log "creating and activating angr"
-
-## conda env create -f /tmp/angr.yml
-
-##conda activate angr
-
-##pip install angr
-##pip install claripy
+xvfb-run /usr/local/bin/wine-setup.sh
+ln -s /home/${NB_USER}/.wine/drive_c/users/prog8300 /home/prog8300/WineUser
 
 
-##python -m ipykernel install --user --name angr --display-name="Python 3.8 angr "
-
-_log "ending steve stuff"
 # The run-hooks function looks for .sh scripts to source and executable files to
 # run within a passed directory.
 run-hooks () {
@@ -111,14 +85,14 @@ if [ "$(id -u)" == 0 ] ; then
     # - CHOWN_HOME_OPTS / CHOWN_EXTRA_OPTS: arguments to the chown commands
 
     # Refit the steve user to the desired the user (NB_USER)
-    if id steve &> /dev/null ; then
-        if ! usermod --home "/home/${NB_USER}" --login "${NB_USER}" steve 2>&1 | grep "no changes" > /dev/null; then
-            _log "Updated the steve user:"
-            _log "- username: steve       -> ${NB_USER}"
-            _log "- home dir: /home/steve -> /home/${NB_USER}"
+    if id prog8300 &> /dev/null ; then
+        if ! usermod --home "/home/${NB_USER}" --login "${NB_USER}" prog8300 2>&1 | grep "no changes" > /dev/null; then
+            _log "Updated the prog8300 user:"
+            _log "- username: prog8300       -> ${NB_USER}"
+            _log "- home dir: /home/prog8300 -> /home/${NB_USER}"
         fi
     elif ! id -u "${NB_USER}" &> /dev/null; then
-        _log "ERROR: Neither the steve user or '${NB_USER}' exists. This could be the result of stopping and starting, the container with a different NB_USER environment variable."
+        _log "ERROR: Neither the prog8300 user or '${NB_USER}' exists. This could be the result of stopping and starting, the container with a different NB_USER environment variable."
         exit 1
     fi
     # Ensure the desired user (NB_USER) gets its desired user id (NB_UID) and is
@@ -134,28 +108,28 @@ if [ "$(id -u)" == 0 ] ; then
         useradd --home "/home/${NB_USER}" --uid "${NB_UID}" --gid "${NB_GID}" --groups 100 --no-log-init "${NB_USER}"
     fi
 
-    # Move or symlink the steve home directory to the desired users home
+    # Move or symlink the prog8300 home directory to the desired users home
     # directory if it doesn't already exist, and update the current working
     # directory to the new location if needed.
-    if [[ "${NB_USER}" != "steve" ]]; then
+    if [[ "${NB_USER}" != "prog8300" ]]; then
         if [[ ! -e "/home/${NB_USER}" ]]; then
-            _log "Attempting to copy /home/steve to /home/${NB_USER}..."
+            _log "Attempting to copy /home/prog8300 to /home/${NB_USER}..."
             mkdir "/home/${NB_USER}"
-            if cp -a /home/steve/. "/home/${NB_USER}/"; then
+            if cp -a /home/prog8300/. "/home/${NB_USER}/"; then
                 _log "Success!"
             else
-                _log "Failed to copy data from /home/steve to /home/${NB_USER}!"
-                _log "Attempting to symlink /home/steve to /home/${NB_USER}..."
-                if ln -s /home/steve "/home/${NB_USER}"; then
+                _log "Failed to copy data from /home/prog8300 to /home/${NB_USER}!"
+                _log "Attempting to symlink /home/prog8300 to /home/${NB_USER}..."
+                if ln -s /home/prog8300 "/home/${NB_USER}"; then
                     _log "Success creating symlink!"
                 else
-                    _log "ERROR: Failed copy data from /home/steve to /home/${NB_USER} or to create symlink!"
+                    _log "ERROR: Failed copy data from /home/prog8300 to /home/${NB_USER} or to create symlink!"
                     exit 1
                 fi
             fi
         fi
         # Ensure the current working directory is updated to the new path
-        if [[ "${PWD}/" == "/home/steve/"* ]]; then
+        if [[ "${PWD}/" == "/home/prog8300/"* ]]; then
             new_wd="/home/${NB_USER}/${PWD:13}"
             _log "Changing working directory to ${new_wd}"
             cd "${new_wd}"
@@ -234,8 +208,8 @@ else
         _log "WARNING: container must be started as root to grant sudo permissions!"
     fi
 
-    steve_UID="$(id -u steve 2>/dev/null)"  # The default UID for the steve user
-    steve_GID="$(id -g steve 2>/dev/null)"  # The default GID for the steve user
+    steve_UID="$(id -u prog8300 2>/dev/null)"  # The default UID for the steve user
+    steve_GID="$(id -g prog8300 2>/dev/null)"  # The default GID for the steve user
 
     # Attempt to ensure the user uid we currently run as has a named entry in
     # the /etc/passwd file, as it avoids software crashing on hard assumptions
@@ -246,19 +220,19 @@ else
     if ! whoami &> /dev/null; then
         _log "There is no entry in /etc/passwd for our UID=$(id -u). Attempting to fix..."
         if [[ -w /etc/passwd ]]; then
-            _log "Renaming old steve user to nayvoj ($(id -u steve):$(id -g steve))"
+            _log "Renaming old prog8300 user to nayvoj ($(id -u prog8300):$(id -g prog8300))"
 
             # We cannot use "sed --in-place" since sed tries to create a temp file in
             # /etc/ and we may not have write access. Apply sed on our own temp file:
-            sed --expression="s/^steve:/nayvoj:/" /etc/passwd > /tmp/passwd
-            echo "${NB_USER}:x:$(id -u):$(id -g):,,,:/home/steve:/bin/bash" >> /tmp/passwd
+            sed --expression="s/^prog8300:/nayvoj:/" /etc/passwd > /tmp/passwd
+            echo "${NB_USER}:x:$(id -u):$(id -g):,,,:/home/prog8300:/bin/bash" >> /tmp/passwd
             cat /tmp/passwd > /etc/passwd
             rm /tmp/passwd
 
             _log "Added new ${NB_USER} user ($(id -u):$(id -g)). Fixed UID!"
 
-            if [[ "${NB_USER}" != "steve" ]]; then
-                _log "WARNING: user is ${NB_USER} but home is /home/steve. You must run as root to rename the home directory!"
+            if [[ "${NB_USER}" != "prog8300" ]]; then
+                _log "WARNING: user is ${NB_USER} but home is /home/prog8300. You must run as root to rename the home directory!"
             fi
         else
             _log "WARNING: unable to fix missing /etc/passwd entry because we don't have write permission. Try setting gid=0 with \"--user=$(id -u):0\"."
@@ -269,7 +243,7 @@ else
     # A misconfiguration occurs when the user modifies the default values of
     # NB_USER, NB_UID, or NB_GID, but we cannot update those values because we
     # are not root.
-    if [[ "${NB_USER}" != "steve" && "${NB_USER}" != "$(id -un)" ]]; then
+    if [[ "${NB_USER}" != "prog8300" && "${NB_USER}" != "$(id -un)" ]]; then
         _log "WARNING: container must be started as root to change the desired user's name with NB_USER=\"${NB_USER}\"!"
     fi
     if [[ "${NB_UID}" != "${steve_UID}" && "${NB_UID}" != "$(id -u)" ]]; then
@@ -280,8 +254,8 @@ else
     fi
 
     # Warn if the user isn't able to write files to ${HOME}
-    if [[ ! -w /home/steve ]]; then
-        _log "WARNING: no write access to /home/steve. Try starting the container with group 'users' (100), e.g. using \"--group-add=users\"."
+    if [[ ! -w /home/prog8300 ]]; then
+        _log "WARNING: no write access to /home/prog8300. Try starting the container with group 'users' (100), e.g. using \"--group-add=users\"."
     fi
 
     # NOTE: This hook is run as the user we started the container as!
