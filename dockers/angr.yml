@@ -1,8 +1,0 @@
-name: angr
-channels:
-  - conda-forge
-dependencies:
-  - python=3.8
-  - pip
-  - libffi=3.3.*
-  - ipykernel
