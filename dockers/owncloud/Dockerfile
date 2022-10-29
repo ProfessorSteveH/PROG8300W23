@@ -41,7 +41,7 @@ RUN chmod 755 /etc/entrypoint.d/90-nginx.sh
 ENTRYPOINT ["/usr/bin/entrypoint"]
 CMD ["/usr/bin/owncloud", "server"]
 
-ADD overlay /
+#ADD overlay /
 WORKDIR /var/www/owncloud
 
 ENV OWNCLOUD_DOMAIN=localhost:8080

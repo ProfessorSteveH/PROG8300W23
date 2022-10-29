@@ -1,17 +1,11 @@
+#!/bin/bash
+
+pushd owncloud && docker build . -t owncloud && bash ./docker-start.sh && popd
+
+pushd code-server && docker build . -t code-server && bash ./docker-start.sh && popd
+
+pushd jupyter && docker build . -t jupyter && bash ./docker-start.sh && popd
 
 
-cd owncloud && docker build . -t owncloud
-
-cd owncloud && bash ./docker-start.sh
-
-
-cd code-server && docker build . -t code-server
-
-cd code-server && bash ./docker-start.sh
-
-
-cd jupyter && docker build . -t jupyter
-
-cd jupyter && bash ./docker-start.sh
 
 
