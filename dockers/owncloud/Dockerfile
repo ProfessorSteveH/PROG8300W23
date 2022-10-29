@@ -33,10 +33,10 @@ RUN wget https://download.owncloud.com/server/stable/owncloud-complete-latest.ta
 RUN bunzip2 /var/www/owncloud.tar.bz2
 RUN tar xf /var/www/owncloud.tar -C /var/www
 
-COPY default /etc/nginx/sites-enabled/default
+#COPY default /etc/nginx/sites-enabled/default
 
-COPY 90-nginx.sh /etc/entrypoint.d/90-nginx.sh
-RUN chmod 755 /etc/entrypoint.d/90-nginx.sh 
+#COPY 90-nginx.sh /etc/entrypoint.d/90-nginx.sh
+#RUN chmod 755 /etc/entrypoint.d/90-nginx.sh 
 
 ENTRYPOINT ["/usr/bin/entrypoint"]
 CMD ["/usr/bin/owncloud", "server"]
@@ -44,11 +44,11 @@ CMD ["/usr/bin/owncloud", "server"]
 #ADD overlay /
 WORKDIR /var/www/owncloud
 
-ENV OWNCLOUD_DOMAIN=localhost:8080
+ENV OWNCLOUD_DOMAIN=localhost:80
 # ENV OWNCLOUD_TRUSTED_DOMAINS=localhost,172.16.10.167,172.17.0.2
 ENV ADMIN_USERNAME=admin
 ENV ADMIN_PASSWORD=p@ssw0rd
-ENV HTTP_PORT=8080
+ENV HTTP_PORT=80
 
 
 RUN find /var/www/owncloud \( \! -user www-data -o \! -group root \) -print0 | xargs -r -0 chown www-data:root && \
