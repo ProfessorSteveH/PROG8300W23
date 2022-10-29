@@ -9,7 +9,7 @@ from jupyter_core.paths import jupyter_data_dir
 
 c = get_config()  # noqa: F821
 c.ServerApp.ip = "*"
-c.ServerApp.port = 8888
+c.ServerApp.port = 8000
 c.ServerApp.open_browser = False
 c.ServerApp.password = u'sha1:e31e1e77039b:193405ef64f74aeddbc8b6d9cbca19bae311182c'   #passwd is p@ssw0rd
 

@@ -1,0 +1,16 @@
+https://raw.githubusercontent.com/owncloud-docker/server/master/v20.04/Dockerfile.amd64
+
+$ wget https://download.owncloud.com/server/stable/owncloud-complete-latest.tar.bz2
+
+https://doc.owncloud.com/server/next/admin_manual/configuration/server/occ_command.html
+
+docker exec --user www-data <owncloud-container-name> occ <your-command>
+
+https://doc.owncloud.com/server/10.11/admin_manual/installation/docker/
+
+ sed -i "s/'trusted_domains' => 'localhost'/'trusted_domains' => [ 0 => 'localhost', 1 => '172.17.0.2', 2 => '172.16.10.167', ]/g" config.php
+
+
+0 => 'localhost',
+
+sed -i "s/0 => 'localhost'/0 => 'localhost', 1 => '172.16.10.167'/g" config.php

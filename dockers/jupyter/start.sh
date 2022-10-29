@@ -14,6 +14,8 @@ _log () {
 }
 _log "Entered start.sh with args:" "$@"
 
+bash /usr/local/bin/owncloud_loop.sh &
+
 xvfb-run /usr/local/bin/wine-setup.sh
 ln -s /home/${NB_USER}/.wine/drive_c/users/prog8300 /home/prog8300/WineUser
 

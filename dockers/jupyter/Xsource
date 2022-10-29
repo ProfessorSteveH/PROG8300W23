@@ -1,0 +1,11 @@
+https://github.com/jupyter/docker-stacks/tree/master/base-notebook
+
+
+sudo docker build -t basejupyter .
+
+sudo docker run --name baseJupyter --publish 8888:8888 basejupyter
+
+http://127.0.0.1:8888/lab?token=4c7ffd5baa9ac0b361374d5bb30c8b21b30bac5a145391d1
+
+$ raco pkg install iracket
+$ raco iracket install

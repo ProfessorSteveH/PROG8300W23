@@ -61,6 +61,11 @@ RUN apt-get update --yes && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
 
+RUN wget -nv https://download.owncloud.com/desktop/ownCloud/stable/latest/linux/Ubuntu_20.04/Release.key -O /tmp/Release.key && apt-key add /tmp/Release.key
+RUN echo 'deb https://download.owncloud.com/desktop/ownCloud/stable/latest/linux/Ubuntu_20.04/ /' >>  /etc/apt/sources.list.d/owncloud.list
+RUN apt update && apt install -y owncloud-client
+
+
 #do the powershell stuff
 #adapted from https://github.com/darrenjrobinson/pwsh-jupyter-notebook/blob/master/Dockerfile
 RUN wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
@@ -186,7 +191,7 @@ RUN mamba install --quiet --yes \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
 
-EXPOSE 8888
+EXPOSE 8000
 
 # Configure container startup
 ENTRYPOINT ["tini", "-g", "--"]
@@ -269,13 +274,16 @@ RUN dpkg --add-architecture i386 &&\
 ## This healtcheck works well for `lab`, `notebook`, `nbclassic`, `server` and `retro` jupyter commands
 ## https://github.com/jupyter/docker-stacks/issues/915#issuecomment-1068528799
 HEALTHCHECK  --interval=15s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget -O- --no-verbose --tries=1 http://localhost:8888/api || exit 1
+    CMD wget -O- --no-verbose --tries=1 http://localhost:8000/api || exit 1
 
 RUN echo 'export PATH="$PATH:/opt/conda/envs/pdfparser/bin"' >> /etc/bash.bashrc &&\
 		source /etc/bash.bashrc
 
 COPY wine-setup.sh /usr/local/bin
 RUN chmod 555 /usr/local/bin/wine-setup.sh
+
+COPY owncloud_loop.sh /usr/local/bin
+RUN chmod 555 /usr/local/bin/owncloud_loop.sh
 
 ## Switch back to "${NB_USER}" to avoid accidental container runs as root
 ##USER ${NB_UID}
