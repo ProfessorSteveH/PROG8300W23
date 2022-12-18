@@ -237,7 +237,7 @@ RUN conda env create -f /tmp/pdfparser.yml &&\
 		pip install oletools[full] olefile pcode2code &&\
 		python -m ipykernel install --user --name pdfparser --display-name="Python 3.9.5 pdf-parser"
 
-RUN dotnet tool install -g Microsoft.dotnet-interactive
+RUN dotnet tool install -g Microsoft.dotnet-interactive  --version 1.0.355307
 RUN pip install nteract_on_jupyter
 ENV PATH="${PATH}:${HOME}/.dotnet/tools"
 RUN dotnet interactive jupyter install
