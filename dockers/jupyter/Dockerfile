@@ -279,6 +279,9 @@ HEALTHCHECK  --interval=15s --timeout=3s --start-period=5s --retries=3 \
 RUN echo 'export PATH="$PATH:/opt/conda/envs/pdfparser/bin"' >> /etc/bash.bashrc &&\
 		source /etc/bash.bashrc
 
+RUN git clone https://github.com/radareorg/radare2
+RUN ( cd radare2 && sys/install.sh )
+
 COPY wine-setup.sh /usr/local/bin
 RUN chmod 555 /usr/local/bin/wine-setup.sh
 
