@@ -289,6 +289,9 @@ RUN ( cd radare2 && sys/install.sh )
 COPY wine-setup.sh /usr/local/bin
 RUN chmod 555 /usr/local/bin/wine-setup.sh
 
+RUN wget https://github.com/mandiant/flare-floss/releases/download/v2.1.0/floss-v2.1.0-linux.zip -O /tmp/floss-v2.1.0-linux.zip
+RUN unzip /tmp/floss-v2.1.0-linux.zip -d /usr/local/bin
+
 COPY owncloud_loop.sh /usr/local/bin
 RUN chmod 555 /usr/local/bin/owncloud_loop.sh
 
